@@ -4,4 +4,4 @@ shapely
 pandas
 folium
 matplotlib
-streamlit
+streamlit==1.65.0
