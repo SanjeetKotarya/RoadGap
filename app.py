@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import base64
 import html
 import re
 from pathlib import Path
@@ -28,6 +29,14 @@ st.set_page_config(
     page_title="RoadGap",
     initial_sidebar_state="expanded",
 )
+ui_folder = Path(__file__).resolve().parent / "UI"
+sidebar_background = base64.b64encode((ui_folder / "sidebar.jpg").read_bytes()).decode("ascii")
+main_background = base64.b64encode((ui_folder / "rightside.jpg").read_bytes()).decode("ascii")
+map_pin_icon = base64.b64encode((ui_folder / "pin.png").read_bytes()).decode("ascii")
+places_card_background = base64.b64encode((ui_folder / "places.jpg").read_bytes()).decode("ascii")
+stack_icon = base64.b64encode((ui_folder / "stack.png").read_bytes()).decode("ascii")
+mapped_card_background = base64.b64encode((ui_folder / "mapped.jpg").read_bytes()).decode("ascii")
+gaps_card_background = base64.b64encode((ui_folder / "gaps.jpg").read_bytes()).decode("ascii")
 offline_fields_open = bool(st.session_state.get("offline_mode", False))
 offline_fields_css = (
     """
@@ -53,45 +62,582 @@ offline_fields_css = (
     """
 )
 st.markdown(
+    (
     """
     <style>
-    .block-container {padding-top: 1rem; padding-bottom: 1rem;}
-    [data-testid="stSidebar"] [data-testid="stSidebarContent"] {padding-top: 0.5rem;}
-    .stAlertContainer.st-emotion-cache-sbgf9b.ep9twe70 {margin-top: 50px;}
-    .st-emotion-cache-1r1cntt.e15d17f11 {margin-top: -80px;}
-    .st-emotion-cache-12bp31y.e1vmumty0 {z-index: 2147483647 !important;}
-    .st-emotion-cache-l8irdn.epcrwu50 {border-bottom: 1px solid #44464d;}
-    .stHorizontalBlock.st-emotion-cache-1a7w0so.e6x7pi3 {margin-top: 50px;}
-    .stElementContainer.element-container.st-emotion-cache-zh2fnc.e6x7pi1 {margin-top: 0;}
-    .st-emotion-cache-1fpp8sd {padding: 0 !important;}
-    .st-emotion-cache-cm9vbh {padding: 0rem .75rem;border-radius: 0;}
-    .st-emotion-cache-uofoxk {gap: 0.5rem;}
-    .st-emotion-cache-zuyloh {border: none; padding:0;}
-    .st-emotion-cache-1bnbo98 {gap: 0.5rem;}
-    .st-emotion-cache-4bm6i2 {border-radius: 0;}
-    .st-emotion-cache-13na8ym {border: none !important;}
-    [data-baseweb="popover"] [role="option"] {padding-top: .35rem !important;padding-bottom: .35rem !important;min-height: 0 !important;}
+    html, body {
+        background: linear-gradient(180deg, #070d1c 0%, #0a1327 30%, #090f21 100%);
+        color: #f4f5ff;
+    }
+    .stApp {
+        background-image:
+            linear-gradient(rgba(7, 11, 21, 0.48), rgba(7, 11, 21, 0.58)),
+            url("__MAIN_BACKGROUND__");
+        background-position: center center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }
+    [data-testid="stAppViewContainer"] {
+        background: transparent;
+    }
+    .st-emotion-cache-99p1qr {
+        background: transparent !important;
+    }
+    .block-container {
+        padding-top: 1rem !important;
+        padding-bottom: 1rem !important;
+        max-width: 100% !important;
+    }
+    [data-testid="stMain"] .block-container {
+        padding-top: 50px !important;
+    }
+    [data-testid="stSidebar"] {
+        background-image:
+            linear-gradient(rgba(9, 13, 22, 0.70), rgba(9, 13, 22, 0.48)),
+            url("__SIDEBAR_BACKGROUND__");
+        background-position: center center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        border-right: 1px solid rgba(135, 150, 190, 0.15);
+        box-shadow: inset -1px 0 0 rgba(255,255,255,0.02);
+    }
+    [data-testid="stSidebar"] [data-testid="stSidebarHeader"] {
+        height: 0 !important;
+        min-height: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    [data-testid="stSidebar"] [data-testid="stSidebarContent"] {
+        padding: 0 1rem 1rem 1rem;
+    }
+    [data-testid="stSidebar"] .st-emotion-cache-1r1cntt {
+        padding-bottom: 0 !important;
+    }
+    [data-testid="stSidebar"][aria-expanded="true"] [data-testid="stSidebarCollapseButton"] {
+        position: relative;
+        top: 2.75rem;
+        z-index: 20;
+    }
+    [data-testid="stSidebar"] .st-key-sidebar-brand {
+        padding-right: 2.5rem;
+    }
+    [data-testid="stSidebar"] .st-key-sidebar-brand h1 {
+        margin-top: 0 !important;
+    }
+    [data-testid="stSidebar"] .st-key-sidebar-brand [data-testid="stCaptionContainer"] {
+        margin-top: 0.35rem;
+    }
+    [data-testid="stSidebar"] .st-key-sidebar-brand {
+        padding-bottom: 1rem;
+        margin-bottom: 1rem;
+        border-bottom: 1px solid rgba(164, 178, 210, 0.2);
+    }
+    [data-testid="stSidebar"] h1,
+    [data-testid="stSidebar"] h2,
+    [data-testid="stSidebar"] h3,
+    [data-testid="stSidebar"] label,
+    [data-testid="stSidebar"] p,
+    [data-testid="stSidebar"] .stMarkdown {
+        color: #eef4ff !important;
+    }
+    [data-testid="stSidebar"] .stCheckbox,
+    [data-testid="stSidebar"] .stSelectbox,
+    [data-testid="stSidebar"] .stTextInput,
+    [data-testid="stSidebar"] .stNumberInput,
+    [data-testid="stSidebar"] .stFileUploader,
+    [data-testid="stSidebar"] .stMultiSelect,
+    [data-testid="stSidebar"] .stSlider,
+    [data-testid="stSidebar"] .stRadio,
+    [data-testid="stSidebar"] .stForm {
+        width: 100%;
+    }
+    [data-testid="stSidebar"] .stTextInput input,
+    [data-testid="stSidebar"] .stNumberInput input,
+    [data-testid="stSidebar"] .stSelectbox div[data-baseweb="select"] > div,
+    [data-testid="stSidebar"] .stMultiSelect div[data-baseweb="select"] > div,
+    [data-testid="stSidebar"] .stFileUploader > div,
+    [data-testid="stSidebar"] .stSlider [data-testid="stBaseSlider"] {
+        background: rgba(19, 28, 41, 0.92) !important;
+        border: 1px solid rgba(145, 170, 220, 0.2);
+        border-radius: 12px;
+        color: #eaf2ff;
+    }
+    [data-testid="stSidebar"] .stFileUploader button,
+    [data-testid="stSidebar"] .stButton > button,
     div[data-testid="stFormSubmitButton"] button {
-        border: 1px solid #e76d56;
-        border-radius: 8px;
-        background: linear-gradient(135deg, #d94b37, #b9342d);
-        color: #fff;
-        font-weight: 650;
-        box-shadow: 0 3px 0 #792821;
-        transition: transform 160ms ease, box-shadow 160ms ease, filter 160ms ease;
+        border-radius: 12px !important;
+        border: 1px solid rgba(255, 118, 92, 0.8) !important;
+        background: linear-gradient(135deg, #ef5d4d 0%, #cf2f3c 100%) !important;
+        color: #fff !important;
+        font-weight: 700 !important;
+        letter-spacing: 0.01em;
+        box-shadow: 0 8px 20px rgba(211, 68, 59, 0.25);
     }
+    [data-testid="stSidebar"] .stButton > button:hover,
     div[data-testid="stFormSubmitButton"] button:hover:not(:disabled) {
-        filter: brightness(1.12);
-        transform: translateY(-2px);
-        box-shadow: 0 5px 14px #d94b3766;
+        filter: brightness(1.08);
+        transform: translateY(-1px);
+        box-shadow: 0 12px 26px rgba(211, 68, 59, 0.32);
     }
-    div[data-testid="stFormSubmitButton"] button:active:not(:disabled) {
-        transform: translateY(1px);
-        box-shadow: 0 1px 0 #792821;
+    [data-testid="stSidebar"] .stSlider [data-testid="stBaseSlider"] {
+        padding: 0 0.2rem;
     }
-    div[data-testid="stFormSubmitButton"] button:focus-visible {
-        outline: 3px solid #ffb49f;
-        outline-offset: 3px;
+    [data-testid="stSidebar"] .stSlider [data-testid="stBaseSlider"] > div {
+        background: linear-gradient(90deg, #ef5d4d, #8e3de5) !important;
+    }
+    [data-testid="stSidebar"] [data-testid="stBaseButton-secondary"] {
+        border: 1px solid rgba(255,255,255,0.12);
+        background: rgba(255,255,255,0.02);
+        color: #eef6ff;
+    }
+    [data-testid="stSidebar"] .stExpander {
+        border: none !important;
+        background: transparent;
+    }
+    [data-testid="stSidebar"] .stExpander summary {
+        background: rgba(255,255,255,0.02);
+        border: 1px solid rgba(255,255,255,0.07);
+        border-radius: 10px;
+        color: #f0f4ff !important;
+    }
+    [data-testid="stSidebar"] .stExpander summary:hover {
+        border-color: rgba(255,255,255,0.12);
+    }
+    [data-testid="stSidebar"] .stAlert,
+    [data-testid="stSidebar"] .stError,
+    [data-testid="stSidebar"] .stWarning,
+    [data-testid="stSidebar"] .stSuccess {
+        border-radius: 12px;
+        margin-top: 0.65rem;
+    }
+    [data-testid="stSidebar"] .stMarkdown h3 {
+        margin-top: 0.8rem;
+        font-size: 1rem;
+        font-weight: 600;
+        color: #eff5ff !important;
+    }
+    [data-testid="stSidebar"] .st-key-analysis-settings-heading h2 {
+        display: flex;
+        align-items: center;
+        gap: 0.55rem;
+        font-size: 1rem !important;
+    }
+    [data-testid="stSidebar"] .st-key-analysis-settings-heading h2::before {
+        content: "tune";
+        font-family: "Material Symbols Rounded";
+        font-size: 1.15rem;
+        line-height: 1;
+        font-weight: 400;
+        font-feature-settings: "liga";
+        color: #dce5f6;
+    }
+    .stTabs [role="tablist"],
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 0.55rem;
+        margin-top: 0.25rem;
+        margin-bottom: 1rem;
+        border: 0 !important;
+        border-bottom: 0 !important;
+        box-shadow: none !important;
+        background: transparent;
+    }
+    .stTabs [role="tablist"]::before,
+    .stTabs [role="tablist"]::after,
+    .stTabs .react-aria-SelectionIndicator,
+    .stTabs [role="tab"]::after,
+    .stTabs [role="tab"][aria-selected="true"]::after,
+    .stTabs [role="tablist"] > :not([role="tab"]),
+    .stTabs [data-baseweb="tab-border"],
+    .stTabs [data-baseweb="tab-highlight"],
+    .stTabs [data-baseweb="tab-highlight"] *,
+    .stTabs [data-baseweb="tab-list"]::before,
+    .stTabs [data-baseweb="tab-list"]::after {
+        display: none !important;
+        content: none !important;
+        height: 0 !important;
+        border: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
+    }
+    .stTabs [role="tab"] {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: rgba(21, 25, 40, 0.88);
+        border: 1px solid rgba(140, 151, 185, 0.08);
+        border-radius: 999px;
+        color: #c6ccdc;
+        padding: 0.45rem 1rem;
+        font-weight: 600;
+        min-height: 2.7rem;
+        border-bottom: 0 !important;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.025);
+        transition: background 160ms ease, border-color 160ms ease, color 160ms ease, box-shadow 160ms ease;
+    }
+    .stTabs [role="tab"]::before {
+        display: inline-block;
+        color: #cbd2e2;
+        font-family: "Segoe UI Symbol", sans-serif;
+        font-size: 1.05rem;
+        line-height: 1;
+    }
+    .stTabs [role="tab"]:nth-of-type(1)::before { content: "⊞"; }
+    .stTabs [role="tab"]:nth-of-type(2)::before { content: "▤"; }
+    .stTabs [role="tab"]:nth-of-type(3)::before { content: "↗"; }
+    .stTabs [role="tab"]:nth-of-type(4)::before { content: "▣"; }
+    .stTabs [role="tab"]:nth-of-type(5)::before { content: "♧"; }
+    .stTabs [role="tab"]:nth-of-type(6)::before { content: "⇩"; }
+    .stTabs [role="tab"]:hover {
+        background: rgba(30, 35, 54, 0.96);
+        border-color: rgba(177, 186, 212, 0.2);
+        color: #f3f5fb;
+    }
+    .stTabs [role="tab"][aria-selected="true"] {
+        background: linear-gradient(180deg, #ed424c, #c82c3d);
+        border-color: #fa5960;
+        border-bottom: 0 !important;
+        color: #fff;
+        box-shadow: none !important;
+        filter: none !important;
+        text-decoration: none !important;
+    }
+    .stTabs [role="tab"][aria-selected="true"]::before {
+        color: #fff;
+    }
+    .st-key-places-metric-card [data-testid="stMetric"],
+    .st-key-gaps-metric-card [data-testid="stMetric"],
+    .st-key-mapped-metric-card [data-testid="stMetric"] {
+        position: relative;
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+        border: 1px solid rgba(150, 164, 204, 0.16);
+        border-radius: 20px;
+        padding: 0.8rem 1rem 0.8rem 6.1rem;
+        box-shadow: 0 10px 24px rgba(2, 6, 17, 0.27), inset 0 1px 0 rgba(255,255,255,0.035);
+    }
+    .st-key-places-metric-card [data-testid="stMetric"] {
+        background-image:
+            linear-gradient(120deg, rgba(33, 24, 42, 0.6), rgba(17, 22, 38, 0.5) 56%, rgba(52, 26, 42, 0.38)),
+            url("__PLACES_CARD_BACKGROUND__");
+        background-position: center, right center;
+        background-size: cover, cover;
+        background-repeat: no-repeat;
+        border-color: rgba(246, 94, 99, 0.22);
+    }
+    .st-key-gaps-metric-card [data-testid="stMetric"] {
+        background-image:
+            linear-gradient(120deg, rgba(31, 25, 53, 0.58), rgba(17, 22, 39, 0.48) 58%, rgba(49, 28, 77, 0.35)),
+            url("__GAPS_CARD_BACKGROUND__");
+        background-position: center, right center;
+        background-size: cover, cover;
+        background-repeat: no-repeat;
+        border-color: rgba(143, 75, 245, 0.22);
+    }
+    .st-key-mapped-metric-card [data-testid="stMetric"] {
+        background-image:
+            linear-gradient(120deg, rgba(20, 38, 43, 0.58), rgba(17, 24, 39, 0.48) 58%, rgba(18, 56, 49, 0.35)),
+            url("__MAPPED_CARD_BACKGROUND__");
+        background-position: center, right center;
+        background-size: cover, cover;
+        background-repeat: no-repeat;
+        border-color: rgba(36, 210, 136, 0.2);
+    }
+    .st-key-places-metric-card [data-testid="stMetric"]::before,
+    .st-key-gaps-metric-card [data-testid="stMetric"]::before,
+    .st-key-mapped-metric-card [data-testid="stMetric"]::before {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        display: grid;
+        width: 4.2rem;
+        height: 4.2rem;
+        place-items: center;
+        border-radius: 50%;
+        transform: translateY(-50%);
+        font-size: 2.1rem;
+        line-height: 1;
+    }
+    .st-key-places-metric-card [data-testid="stMetric"]::before {
+        content: "";
+        background-image:
+            linear-gradient(270deg, rgba(255, 75, 81, 0.34) 0%, rgba(190, 48, 69, 0.19) 100%),
+            url("__MAP_PIN_ICON__");
+        background-position: center, center;
+        background-repeat: no-repeat;
+        background-size: cover, 2rem 2rem;
+        box-shadow: 0 0 0 1px rgba(255, 89, 95, 0.08), 0 0 28px rgba(255, 66, 75, 0.13);
+    }
+    .st-key-gaps-metric-card [data-testid="stMetric"]::before {
+        content: "!";
+
+        background: linear-gradient(270deg, rgba(168, 85, 247, 0.54) 0%, rgba(124, 58, 237, 0.19) 100%);
+        color: #fff;
+        font-family: Arial, sans-serif;
+        font-weight: 700;
+        box-shadow: 0 0 27px rgba(133, 63, 235, 0.18);
+    }
+    .st-key-mapped-metric-card [data-testid="stMetric"]::before {
+        content: "";
+        background-image:
+            linear-gradient(270deg, rgba(30, 217, 139, 0.3), rgba(23, 144, 105, 0.18)),
+            url("__STACK_ICON__");
+        background-position: center, center;
+        background-repeat: no-repeat;
+        background-size: cover, 2.5rem 2.5rem;
+        box-shadow: 0 0 0 1px rgba(54, 218, 147, 0.08), 0 0 28px rgba(32, 217, 140, 0.13);
+    }
+    .st-emotion-cache-1bnbo98:has(iframe),
+    .st-emotion-cache-1bnbo98:has(.st-key-top-gap-list) {
+        box-sizing: border-box;
+        overflow: hidden;
+        padding: 0.65rem 0.7rem 0.75rem;
+        border: 1px solid rgba(133, 146, 182, 0.2) !important;
+        border-radius: 22px !important;
+        background: linear-gradient(145deg, rgba(18, 23, 39, 0.94), rgba(12, 17, 30, 0.97)) !important;
+        box-shadow: 0 12px 30px rgba(2, 6, 17, 0.3), inset 0 1px 0 rgba(255,255,255,0.035);
+    }
+    [data-testid="column"]:has(iframe) h2,
+    [data-testid="column"]:has(.st-key-top-gap-list) h2 {
+        margin-top: 0.15rem !important;
+        margin-bottom: 0.6rem !important;
+    }
+    .map-panel-title {
+        display: flex;
+        align-items: center;
+        gap: 0.55rem;
+        margin: 0.15rem 0 0.6rem;
+        color: #f1f5ff;
+        font-size: 1.3rem;
+        font-weight: 700;
+        line-height: 1.35;
+    }
+    .map-panel-title::before {
+        content: "";
+        flex: 0 0 1.15rem;
+        width: 1.15rem;
+        height: 1.35rem;
+        background: center / contain no-repeat url("__MAP_PIN_ICON__");
+        filter: drop-shadow(0 0 5px rgba(248, 66, 91, 0.24));
+    }
+    [data-testid="column"]:has(iframe) iframe {
+        border-radius: 14px;
+    }
+    .focus-gap-label {
+        display: flex;
+        align-items: center;
+        min-height: 2.7rem;
+        color: #dce3f2;
+        font-size: 0.95rem;
+        font-weight: 550;
+        white-space: nowrap;
+    }
+    [data-testid="column"]:has(iframe) [data-testid="stSelectbox"] {
+        padding-top: 0 !important;
+        margin-top: 0 !important;
+    }
+    [data-testid="column"]:has(iframe) [data-testid="stSelectbox"] > label {
+        display: none;
+    }
+    [data-testid="column"]:has(iframe) [data-testid="stSelectbox"] div[data-baseweb="select"] > div {
+        min-height: 2.7rem;
+        border: 1px solid rgba(146, 158, 194, 0.12) !important;
+        border-radius: 14px !important;
+        background: rgba(27, 31, 49, 0.9) !important;
+    }
+    [data-testid="stMetric"] > div {
+        font-size: 0.9rem;
+        color: #dfe8ff;
+    }
+    [data-testid="stMetricLabel"] {
+        font-size: 0.82rem !important;
+        letter-spacing: 0.01em;
+        color: #d5daea !important;
+    }
+    [data-testid="stMetricValue"] {
+        font-size: clamp(1.8rem, 2.2vw, 2.45rem) !important;
+        font-weight: 750 !important;
+        color: #f7f8ff !important;
+        line-height: 1.15;
+    }
+    [data-testid="stMetricDelta"] {
+        color: #20d879 !important;
+    }
+    [data-testid="stVerticalBlockBorderWrapper"],
+    [data-testid="stDecorativeBlock"],
+    [data-testid="stContainer"] {
+        background: transparent;
+    }
+    [data-testid="stFormSubmitButton"] button {
+        width: 100%;
+        min-height: 2.9rem;
+    }
+    .st-key-top-gap-heading {
+        margin: 0 0 0.35rem;
+    }
+    .st-key-top-gap-heading p {
+        display: flex;
+        align-items: center;
+        gap: 0.55rem;
+        margin: 0;
+        color: #f4f5ff;
+        font-size: 1.3rem;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+    }
+    .st-key-top-gap-heading p::before {
+        content: "💡";
+        font-size: 1.35rem;
+        filter: drop-shadow(0 0 7px rgba(255, 195, 59, 0.38));
+    }
+    .st-key-top-gap-list [data-testid="stVerticalBlockBorderWrapper"]:has(.gap-card) {
+        overflow: hidden;
+        border: 1px solid rgba(151, 164, 201, 0.22) !important;
+        border-radius: 16px !important;
+        background: linear-gradient(145deg, rgba(20, 25, 41, 0.96), rgba(13, 18, 31, 0.96));
+        box-shadow: 0 8px 22px rgba(3, 6, 15, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.035);
+        padding: 0.6rem 0.75rem 0.45rem;
+        transition: border-color 160ms ease, box-shadow 160ms ease;
+    }
+    .st-key-top-gap-list > div[data-testid="stVerticalBlock"] {
+        gap: 0.65rem !important;
+    }
+    .st-key-top-gap-list [data-testid="stVerticalBlockBorderWrapper"]:has(.gap-card):hover {
+        border-color: rgba(179, 190, 224, 0.34) !important;
+        box-shadow: 0 10px 24px rgba(3, 6, 15, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.045);
+    }
+    .st-key-top-gap-list .gap-card {
+        padding: 0 0.05rem 0.25rem;
+    }
+    .st-key-top-gap-list .gap-card-title {
+        font-weight: 700;
+        font-size: 1.02rem;
+        line-height: 1.35;
+        margin-bottom: 0.28rem;
+        color: #f2f4fb;
+    }
+    .st-key-top-gap-list .gap-card-meta {
+        font-size: 0.84rem;
+        line-height: 1.5;
+        color: #aeb8d0;
+    }
+    .st-key-top-gap-list .gap-confidence {
+        display: inline-block;
+        color: #ffc43d;
+        font-weight: 650;
+        white-space: nowrap;
+    }
+    .st-key-top-gap-list [data-testid="stExpander"] {
+        overflow: hidden;
+        border: 0 !important;
+        border-radius: 0 0 10px 10px;
+        background: transparent;
+        box-sizing: border-box;
+        width: calc(100% + 1.5rem) !important;
+        max-width: none !important;
+        margin: 0 -0.75rem 0.1rem;
+    }
+    .st-key-top-gap-list [data-testid="stExpander"] summary {
+        display: flex;
+        align-items: center;
+        min-height: 2.45rem;
+        padding: 0.35rem 0.9rem;
+        background: rgba(113, 125, 157, 0.13);
+        color: #e5e9f4 !important;
+        font-weight: 550;
+        transition: background 160ms ease;
+    }
+    .st-key-top-gap-list [data-testid="stExpander"] summary > div {
+        display: flex;
+        align-items: center;
+    }
+    .st-key-top-gap-list [data-testid="stExpander"] summary [data-testid="stMarkdownContainer"] p {
+        margin: 0 !important;
+        line-height: 1.25;
+    }
+    .st-key-top-gap-list [data-testid="stExpander"] summary svg {
+        display: block;
+        flex: 0 0 auto;
+    }
+    .st-key-top-gap-list [data-testid="stExpander"] summary:hover,
+    .st-key-top-gap-list [data-testid="stExpander"] details[open] > summary {
+        background: rgba(123, 136, 170, 0.2);
+    }
+    .st-key-top-gap-list [data-testid="stExpander"] [data-testid="stMarkdownContainer"] p {
+        color: #d7dceb;
+        font-size: 0.91rem;
+        line-height: 1.58;
+        margin-bottom: 0.85rem;
+    }
+    .st-key-top-gap-list [data-testid="stExpander"] [data-testid="stMarkdownContainer"] strong {
+        color: #f1f3fa;
+        font-weight: 700;
+    }
+    .st-key-top-gap-list [data-testid="stLinkButton"] a {
+        min-height: 2.7rem;
+        border: 1px solid rgba(146, 158, 194, 0.12) !important;
+        border-radius: 12px !important;
+        background: rgba(91, 103, 134, 0.2) !important;
+        color: #e8ebf5 !important;
+        font-weight: 600 !important;
+        box-shadow: none !important;
+        transition: background 160ms ease, border-color 160ms ease;
+    }
+    .st-key-top-gap-list [data-testid="stLinkButton"] a:hover {
+        background: rgba(108, 121, 154, 0.3) !important;
+        border-color: rgba(176, 187, 220, 0.28) !important;
+    }
+    .stMarkdown h2 {
+        color: #f1f5ff !important;
+        font-size: 1.3rem !important;
+        margin-bottom: 0.7rem !important;
+    }
+    .stDataFrame {
+        background: rgba(15, 22, 34, 0.8);
+        border: 1px solid rgba(158, 172, 214, 0.12);
+        border-radius: 15px;
+    }
+    .stDataFrame > div {
+        border-radius: 15px;
+    }
+    .stCheckbox > label,
+    .stRadio > label,
+    .stSelectbox > label,
+    .stTextInput > label,
+    .stNumberInput > label,
+    .stFileUploader > label,
+    .stMultiSelect > label,
+    .stSlider > label {
+        font-weight: 600;
+        color: #edf3ff !important;
+    }
+    .stTextInput input, .stNumberInput input, .stSelectbox div[data-baseweb="select"] > div {
+        background: rgba(12, 18, 28, 0.9) !important;
+        color: #f0f6ff !important;
+    }
+    .stTextInput input::placeholder {
+        color: rgba(175, 193, 221, 0.72);
+    }
+    .stSelectbox [data-baseweb="popover"] {
+        background: rgba(13, 20, 31, 0.98);
+        border: 1px solid rgba(164, 180, 220, 0.2);
+    }
+    [data-baseweb="popover"] [role="option"] {
+        color: #edf3ff !important;
+        background: rgba(13, 20, 31, 0.98);
+        padding-top: 0.35rem !important;
+        padding-bottom: 0.35rem !important;
+        min-height: 0 !important;
+    }
+    [data-baseweb="popover"] [role="option"][aria-selected="true"] {
+        background: rgba(255, 111, 87, 0.18);
+    }
+    .st-key-offline-fields {
+        transition: max-height 420ms ease, opacity 260ms ease, visibility 0s;
+    }
+    .st-emotion-cache-q25c8l {
+        gap: 0 !important;
     }
     """
     + offline_fields_css
@@ -100,13 +646,16 @@ st.markdown(
         div[data-testid="stFormSubmitButton"] button {transition: none;}
         .st-key-offline-fields {transition: none;}
     }
-    h1 {font-size: 1.65rem !important; padding-bottom: 0 !important;}
-    div[data-testid="stMetric"] {padding: .55rem .8rem; border: 1px solid #e6e9ef; border-radius: .6rem;}
-    .st-key-top-gap-list .gap-card {padding:.65rem .8rem 0rem .8rem;}
-    .gap-card-title {font-weight:650;font-size:1rem;margin-bottom:.2rem;}
-    .gap-card-meta {font-size:.84rem;color:#596579;margin-bottom:.3rem;}
     </style>
-    """,
+    """
+    )
+    .replace("__MAIN_BACKGROUND__", f"data:image/jpeg;base64,{main_background}")
+    .replace("__SIDEBAR_BACKGROUND__", f"data:image/jpeg;base64,{sidebar_background}")
+    .replace("__MAP_PIN_ICON__", f"data:image/png;base64,{map_pin_icon}")
+    .replace("__PLACES_CARD_BACKGROUND__", f"data:image/jpeg;base64,{places_card_background}")
+    .replace("__STACK_ICON__", f"data:image/png;base64,{stack_icon}")
+    .replace("__MAPPED_CARD_BACKGROUND__", f"data:image/jpeg;base64,{mapped_card_background}")
+    .replace("__GAPS_CARD_BACKGROUND__", f"data:image/jpeg;base64,{gaps_card_background}"),
     unsafe_allow_html=True,
 )
 
@@ -124,10 +673,12 @@ for folder_name in ("OSM", "data"):
                 project_file_paths[label] = project_file
 
 with st.sidebar:
-    st.title("RoadGap")
-    st.caption("Find missing road safety features and design fixes")
+    with st.container(key="sidebar-brand"):
+        st.title("RoadGap")
+        st.caption("Find missing road safety features and design fixes")
 
-    st.header("Analysis settings")
+    with st.container(key="analysis-settings-heading"):
+        st.header("Analysis settings")
     offline_mode = st.checkbox(
         "Use local map data (offline)",
         value=st.session_state.get("offline_mode", False),
@@ -140,7 +691,7 @@ with st.sidebar:
         with st.container(key="offline-fields"):
             local_source = st.selectbox("Local map data", local_sources)
             offline_file = st.file_uploader(
-                "Upload OSM XML or GeoJSON (optional when choosing a project file)",
+                "Upload OSM XML or GeoJSON",
                 type=["osm", "geojson", "json"],
                 help="Accepts an OSM XML .osm file, or a GeoJSON FeatureCollection. PBF files are not supported.",
             )
@@ -242,12 +793,18 @@ if "place name" in display_df:
 top_gaps_df = display_df.head(int(result["settings"].get("top_n", 5)))
 
 metric_cols = st.columns(3)
-metric_cols[0].metric("Places checked", int(view_metadata.get("places_checked", 0)))
-metric_cols[1].metric(
-    "Gaps found",
-    len(result["combined"]) if chosen_view == "Combined" else len(result["results"][chosen_view]),
-)
-metric_cols[2].metric("Mapped existing features", int(view_metadata.get("mapped_feature_count", 0)))
+with metric_cols[0]:
+    with st.container(key="places-metric-card"):
+        st.metric("Places checked", int(view_metadata.get("places_checked", 0)))
+with metric_cols[1]:
+    with st.container(key="gaps-metric-card"):
+        st.metric(
+            "Gaps found",
+            len(result["combined"]) if chosen_view == "Combined" else len(result["results"][chosen_view]),
+        )
+with metric_cols[2]:
+    with st.container(key="mapped-metric-card"):
+        st.metric("Mapped existing features", int(view_metadata.get("mapped_feature_count", 0)))
 
 for warning in result.get("warnings", []):
     if "separate Overpass data service" in warning or "Offline mode could not" in warning:
@@ -260,16 +817,27 @@ overview_tab, table_tab, charts_tab, report_tab, checklist_tab, downloads_tab = 
 with overview_tab:
     left, right = st.columns([3, 2], gap="medium")
     with left:
-        st.subheader("Map")
+        st.markdown(
+            '<div class="map-panel-title">Map</div>',
+            unsafe_allow_html=True,
+        )
         if display_df.empty:
-            focus_rank = st.selectbox("Focus on gap #", [0], format_func=lambda _: "No gaps available")
+            focus_options = [0]
+            focus_format = lambda _: "No gaps available"
         else:
             rank_values = [int(value) for value in display_df["rank"].dropna().tolist()]
+            focus_options = [0] + rank_values
+            focus_format = lambda value: "No focus" if value == 0 else f"#{value}"
+        focus_label_col, focus_select_col = st.columns([0.55, 1], gap="small", vertical_alignment="center")
+        with focus_label_col:
+            st.markdown('<div class="focus-gap-label">Focus on gap</div>', unsafe_allow_html=True)
+        with focus_select_col:
             focus_rank = st.selectbox(
                 "Focus on gap #",
-                [0] + rank_values,
-                format_func=lambda value: "No focus" if value == 0 else f"#{value}",
+                focus_options,
+                format_func=focus_format,
                 key=f"focus_{chosen_view}_{run_id}",
+                label_visibility="collapsed",
             )
         map_data_frames = []
         map_analysis_names = []
@@ -367,7 +935,8 @@ with overview_tab:
         st.components.v1.html(map_html, height=520, scrolling=False)
 
     with right:
-        st.subheader("Top gaps")
+        with st.container(key="top-gap-heading"):
+            st.markdown("Top gaps")
         with st.container(height=605, border=False, key="top-gap-list"):
             if display_df.empty:
                 st.info("No reliable gap rows are available for this view.")
@@ -385,14 +954,13 @@ with overview_tab:
                     )
                     score_value = pd.to_numeric(row.get("score"), errors="coerce")
                     confidence = base.display_value(row.get("confidence"), "normal")
-                    confidence_color = "#9a6700" if confidence == "low confidence" else "#116329"
                     score_text = f"{score_value:.1f}" if pd.notna(score_value) else "N/A"
                     with st.container(border=True):
                         st.markdown(
                             f'<div class="gap-card"><div class="gap-card-title">#{rank} {html.escape(name)}</div>'
                             f'<div class="gap-card-meta">{html.escape(place_type)} · {html.escape(distance_text)}'
                             f' · Score {score_text}'
-                            f' · <span style="color:{confidence_color};font-weight:600">{html.escape(confidence)}</span></div></div>',
+                            f' · <span class="gap-confidence">{html.escape(confidence)}</span></div></div>',
                             unsafe_allow_html=True,
                         )
                         with st.expander("Details", key=f"details_{chosen_view}_{rank}_{run_id}"):
@@ -540,9 +1108,6 @@ with checklist_tab:
 
 with downloads_tab:
     files = result.get("output_files", {})
-    run_directory = files.get("run_directory")
-    if run_directory:
-        st.caption(f"This run's files are saved in: {run_directory}")
     download_columns = st.columns(4)
 
     def download_file(column, label, file_key, fallback_name, fallback_frame=None):
