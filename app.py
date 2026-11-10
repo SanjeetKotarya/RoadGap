@@ -84,6 +84,15 @@ st.markdown(
     .st-emotion-cache-99p1qr {
         background: transparent !important;
     }
+    .st-emotion-cache-yty0fn {
+        border: none;
+    }
+    .st-emotion-cache-13na8ym{
+    border: none !important;
+    }
+    .st-emotion-cache-1r1cntt {
+    padding: 0 !important;
+    }
     .block-container {
         padding-top: 1rem !important;
         padding-bottom: 1rem !important;
@@ -508,7 +517,7 @@ st.markdown(
         box-shadow: 0 10px 24px rgba(3, 6, 15, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.045);
     }
     .st-key-top-gap-list .gap-card {
-        padding: 0 0.05rem 0.25rem;
+        padding: 0.55rem 0.55rem;
     }
     .st-key-top-gap-list .gap-card-title {
         font-weight: 700;
@@ -522,6 +531,9 @@ st.markdown(
         line-height: 1.5;
         color: #aeb8d0;
     }
+    .st-emotion-cache-1fpp8sd{
+    padding: 0;
+    }
     .st-key-top-gap-list .gap-confidence {
         display: inline-block;
         color: #ffc43d;
@@ -534,15 +546,13 @@ st.markdown(
         border-radius: 0 0 10px 10px;
         background: transparent;
         box-sizing: border-box;
-        width: calc(100% + 1.5rem) !important;
-        max-width: none !important;
+        width: auto !important;
         margin: 0 -0.75rem 0.1rem;
     }
     .st-key-top-gap-list [data-testid="stExpander"] summary {
         display: flex;
         align-items: center;
-        min-height: 2.45rem;
-        padding: 0.35rem 0.9rem;
+        padding: 0 0.9rem;
         background: rgba(113, 125, 157, 0.13);
         color: #e5e9f4 !important;
         font-weight: 550;
@@ -575,14 +585,27 @@ st.markdown(
         font-weight: 700;
     }
     .st-key-top-gap-list [data-testid="stLinkButton"] a {
-        min-height: 2.7rem;
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+        width: 100%;
+        min-height: 2.35rem;
+        height: auto;
+        padding: 0.5rem 0.85rem !important;
         border: 1px solid rgba(146, 158, 194, 0.12) !important;
-        border-radius: 12px !important;
+        border-radius: 10px !important;
         background: rgba(91, 103, 134, 0.2) !important;
         color: #e8ebf5 !important;
+        font-size: 0.86rem !important;
         font-weight: 600 !important;
+        line-height: 1.25 !important;
         box-shadow: none !important;
         transition: background 160ms ease, border-color 160ms ease;
+    }
+    .st-key-top-gap-list [data-testid="stLinkButton"] [data-testid="stMarkdownContainer"] p {
+        margin: 0 !important;
+        line-height: inherit;
     }
     .st-key-top-gap-list [data-testid="stLinkButton"] a:hover {
         background: rgba(108, 121, 154, 0.3) !important;
