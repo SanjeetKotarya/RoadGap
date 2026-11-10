@@ -540,6 +540,8 @@ st.markdown(
         font-weight: 650;
         white-space: nowrap;
     }
+    .st-emotion-cache-114vndr { gap: 1rem;}
+
     .st-key-top-gap-list [data-testid="stExpander"] {
         overflow: hidden;
         border: 0 !important;
